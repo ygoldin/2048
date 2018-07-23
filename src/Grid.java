@@ -36,19 +36,37 @@ public class Grid {
 	
 	public void moveRight() {
 		for(int row = 0; row < SIZE; row++) {
-			if(!rowHasValues(row)) {
-				return;
+			int possibleCol = columnOfOnlyValueInRow(row);
+			if(possibleCol == -1 || possibleCol == SIZE - 1) { //no values or it's already on the right
+				continue;
+			} else if(possibleCol >= 0) { //need to move it to the right
+				int value = board[row][possibleCol];
+				openSpots.add(setValueFromLocation(row, possibleCol)); //re-open the spot
+				board[row][possibleCol] = 0;
+				openSpots.remove(setValueFromLocation(row, SIZE - 1)); //close the new spot
+				board[row][SIZE - 1] = value;
+				continue;
 			}
 		}
 	}
 	
-	private boolean rowHasValues(int row) {
+	//returns -2 if there are multiple values in the row, -1 if there aren't any, and the column
+	//if there's only one
+	private int columnOfOnlyValueInRow(int row) {
+		int values = 0;
+		int col = -1;
 		for(int c = 0; c < SIZE; c++) {
 			if(board[row][c] != 0) {
-				return true;
+				values++;
+				col = c;
 			}
 		}
-		return false;
+		if(values == 1) {
+			return col;
+		} else if(values == 0) {
+			return -1;
+		}
+		return -2;
 	}
 	
 	private int[] locationFromSetValue(int n) {
