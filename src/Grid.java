@@ -27,16 +27,36 @@ public class Grid {
 		board[secondLocation[0]][secondLocation[1]] = SMALLEST_VALUE;
 	}
 	
+	public int valueAtLocation(int row, int col) {
+		if(row < 0 || row >= SIZE || col < 0 || col >= SIZE) {
+			throw new IllegalArgumentException();
+		}
+		return board[row][col];
+	}
+	
+	public void moveRight() {
+		for(int row = 0; row < SIZE; row++) {
+			if(!rowHasValues(row)) {
+				return;
+			}
+		}
+	}
+	
+	private boolean rowHasValues(int row) {
+		for(int c = 0; c < SIZE; c++) {
+			if(board[row][c] != 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private int[] locationFromSetValue(int n) {
 		return new int[] {n/SIZE, n%SIZE};
 	}
 	
 	private int setValueFromLocation(int row, int col) {
 		return row*SIZE + col;
-	}
-	
-	public boolean spotIsFull(int row, int col) {
-		return openSpots.contains(setValueFromLocation(row, col));
 	}
 	
 	private int getRandomOpenSpot() {
