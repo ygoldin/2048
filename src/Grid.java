@@ -1,4 +1,6 @@
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -36,13 +38,18 @@ public class Grid {
 	
 	public void moveRight() {
 		for(int row = 0; row < SIZE; row++) {
-			int possibleCol = columnOfOnlyValueInRow(row);
-			if(possibleCol == -1 || possibleCol == SIZE - 1) { //no values or it's already on the right
+			Set<Integer> columns = columnsOfValuesInRow(row);
+			if(columns.isEmpty()) {
 				continue;
-			} else if(possibleCol >= 0) { //need to move it to the right
-				int value = board[row][possibleCol];
-				openSpots.add(setValueFromLocation(row, possibleCol)); //re-open the spot
-				board[row][possibleCol] = 0;
+			}
+			if(columns.size() == 1) {
+				int col = columns.iterator().next();
+				if(col == SIZE - 1) {
+					continue;
+				}
+				int value = board[row][col];
+				openSpots.add(setValueFromLocation(row, col)); //re-open the spot
+				board[row][col] = 0;
 				openSpots.remove(setValueFromLocation(row, SIZE - 1)); //close the new spot
 				board[row][SIZE - 1] = value;
 				continue;
@@ -50,23 +57,15 @@ public class Grid {
 		}
 	}
 	
-	//returns -2 if there are multiple values in the row, -1 if there aren't any, and the column
-	//if there's only one
-	private int columnOfOnlyValueInRow(int row) {
-		int values = 0;
-		int col = -1;
+	//returns a set of all of the occupied columns in the row
+	private Set<Integer> columnsOfValuesInRow(int row) {
+		Set<Integer> columns = new HashSet<>();
 		for(int c = 0; c < SIZE; c++) {
 			if(board[row][c] != 0) {
-				values++;
-				col = c;
+				columns.add(c);
 			}
 		}
-		if(values == 1) {
-			return col;
-		} else if(values == 0) {
-			return -1;
-		}
-		return -2;
+		return columns;
 	}
 	
 	private int[] locationFromSetValue(int n) {
