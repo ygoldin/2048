@@ -1,6 +1,6 @@
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -38,12 +38,12 @@ public class Grid {
 	
 	public void moveRight() {
 		for(int row = 0; row < SIZE; row++) {
-			Set<Integer> columns = columnsOfValuesInRow(row);
+			List<Integer> columns = columnsOfValuesInRow(row);
 			if(columns.isEmpty()) {
 				continue;
 			}
 			if(columns.size() == 1) {
-				int col = columns.iterator().next();
+				int col = columns.get(0);
 				if(col == SIZE - 1) {
 					continue;
 				}
@@ -52,20 +52,50 @@ public class Grid {
 				board[row][col] = 0;
 				openSpots.remove(setValueFromLocation(row, SIZE - 1)); //close the new spot
 				board[row][SIZE - 1] = value;
-				continue;
+			} else {
+				for(int i = columns.size() - 1; i >= 0; i--) {
+					int col1 = columns.get(i);
+					int val1 = board[row][col1];
+					if(i > 0) {
+						int col2 = columns.get(i - 1);
+						int val2 = board[row][col2];
+						if(val1 == val2) {
+							int newCol = furthestRightOpenColumn(row);
+							if(newCol < col1) {
+								newCol = col1;
+							}
+							openSpots.add(setValueFromLocation(row, col1)); //re-open the spot
+							board[row][col1] = 0;
+							openSpots.add(setValueFromLocation(row, col2)); //re-open the spot
+							board[row][col2] = 0;
+							openSpots.remove(setValueFromLocation(row, newCol)); //close the new spot
+							board[row][newCol] = val1 + val2;
+							i--; //skip looking at the left-moved column again
+						}
+					}
+				}
 			}
 		}
 	}
 	
-	//returns a set of all of the occupied columns in the row
-	private Set<Integer> columnsOfValuesInRow(int row) {
-		Set<Integer> columns = new HashSet<>();
+	//returns a list of all of the occupied columns in the row
+	private List<Integer> columnsOfValuesInRow(int row) {
+		List<Integer> columns = new ArrayList<>();
 		for(int c = 0; c < SIZE; c++) {
 			if(board[row][c] != 0) {
 				columns.add(c);
 			}
 		}
 		return columns;
+	}
+	
+	private int furthestRightOpenColumn(int row) {
+		for(int c = SIZE - 1; c >= 0; c--) {
+			if(board[row][c] == 0) {
+				return c;
+			}
+		}
+		return -1;
 	}
 	
 	private int[] locationFromSetValue(int n) {
