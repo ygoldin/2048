@@ -72,6 +72,9 @@ public class Grid {
 	}
 	
 	private void placeNewValueRandomly() {
+		if(openSpots.isEmpty()) {
+			throw new IllegalStateException("no empty spots");
+		}
 		int randomSpot = rand.nextInt(SIZE*SIZE);
 		while(!openSpots.contains(randomSpot)) {
 			randomSpot = rand.nextInt(SIZE*SIZE);
