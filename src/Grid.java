@@ -69,6 +69,7 @@ public class Grid {
 				}
 			}
 		}
+		placeNewValueRandomly();
 	}
 	
 	private void placeNewValueRandomly() {
