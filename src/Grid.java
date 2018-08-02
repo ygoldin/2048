@@ -18,15 +18,8 @@ public class Grid {
 		for(int i = 0; i < SIZE*SIZE; i++) {
 			openSpots.add(i);
 		}
-		int firstPlacement = getRandomOpenSpot();
-		openSpots.remove(firstPlacement);
-		int secondPlacement = getRandomOpenSpot();
-		openSpots.remove(secondPlacement);
-		
-		int[] firstLocation = locationFromSetValue(firstPlacement);
-		int[] secondLocation = locationFromSetValue(secondPlacement);
-		board[firstLocation[0]][firstLocation[1]] = SMALLEST_VALUE;
-		board[secondLocation[0]][secondLocation[1]] = SMALLEST_VALUE;
+		placeNewValueRandomly();
+		placeNewValueRandomly();
 	}
 	
 	public int valueAtLocation(int row, int col) {
@@ -78,6 +71,16 @@ public class Grid {
 		}
 	}
 	
+	private void placeNewValueRandomly() {
+		int randomSpot = rand.nextInt(SIZE*SIZE);
+		while(!openSpots.contains(randomSpot)) {
+			randomSpot = rand.nextInt(SIZE*SIZE);
+		}
+		openSpots.remove(randomSpot);
+		int[] location = locationFromSetValue(randomSpot);
+		board[location[0]][location[1]] = SMALLEST_VALUE;
+	}
+	
 	//returns a list of all of the occupied columns in the row
 	private List<Integer> columnsOfValuesInRow(int row) {
 		List<Integer> columns = new ArrayList<>();
@@ -104,14 +107,6 @@ public class Grid {
 	
 	private int setValueFromLocation(int row, int col) {
 		return row*SIZE + col;
-	}
-	
-	private int getRandomOpenSpot() {
-		int result = rand.nextInt(SIZE*SIZE);
-		while(!openSpots.contains(result)) {
-			result = rand.nextInt(SIZE*SIZE);
-		}
-		return result;
 	}
 	
 	public String toString() {
