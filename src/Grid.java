@@ -96,10 +96,48 @@ public class Grid {
 		return columns;
 	}
 	
+	//returns a list of all of the occupied rows in the column
+	private List<Integer> rowsOfValuesInColumn(int col) {
+		List<Integer> rows = new ArrayList<>();
+		for(int r = 0; r < SIZE - 1; r++) {
+			if(board[r][col] != 0) {
+				rows.add(r);
+			}
+		}
+		return rows;
+	}
+	
 	private int furthestRightOpenColumn(int row) {
 		for(int c = SIZE - 1; c >= 0; c--) {
 			if(board[row][c] == 0) {
 				return c;
+			}
+		}
+		return -1;
+	}
+	
+	private int furthestLeftOpenColumn(int row) {
+		for(int c = 0; c < SIZE; c++) {
+			if(board[row][c] == 0) {
+				return c;
+			}
+		}
+		return -1;
+	}
+	
+	private int furthestDownOpenRow(int col) {
+		for(int r = SIZE - 1; r >= 0; r--) {
+			if(board[r][col] == 0) {
+				return r;
+			}
+		}
+		return -1;
+	}
+	
+	private int furthestUpOpenRow(int col) {
+		for(int r = 0; r < SIZE; r++) {
+			if(board[r][col] == 0) {
+				return r;
 			}
 		}
 		return -1;
