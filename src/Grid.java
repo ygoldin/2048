@@ -60,6 +60,37 @@ public class Grid {
 		placeNewValueRandomly();
 	}
 	
+	public void moveLeft() {
+		for(int row = 0; row < SIZE; row++) {
+			List<Integer> columns = columnsOfValuesInRow(row);
+			if(!finishedMoveWithZeroOrOneValuesInRow(columns, row, 0)) {
+				for(int i = 0; i < columns.size(); i++) {
+					int col1 = columns.get(i);
+					int val1 = board[row][col1];
+					int newCol = furthestLeftOpenColumn(row);
+					if(newCol > col1 || newCol < 0) { //open col is to the right or all col are full
+						newCol = col1;
+					}
+					if(i < columns.size() - 1) { //could potentially combine two spots
+						int col2 = columns.get(i + 1);
+						int val2 = board[row][col2];
+						if(val1 == val2) {
+							combineTwoSpots(row, col1, col2, newCol, val1 + val2);
+							i++; //skip looking at the right-moved column again
+						} else { 
+							openSpot(row, col1);
+							closeSpot(row, newCol, val1); //just move it over
+						}
+					} else {
+						openSpot(row, col1);
+						closeSpot(row, newCol, val1); //just move it over, can't combine with other spot
+					}
+				}
+			}
+		}
+		placeNewValueRandomly();
+	}
+	
 	private boolean finishedMoveWithZeroOrOneValuesInRow(List<Integer> columns, int row,
 			int colOnIntendedSide) {
 		if(columns.isEmpty()) {
