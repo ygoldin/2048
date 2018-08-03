@@ -36,17 +36,23 @@ public class Grid {
 				for(int i = columns.size() - 1; i >= 0; i--) {
 					int col1 = columns.get(i);
 					int val1 = board[row][col1];
-					if(i > 0) {
+					int newCol = furthestRightOpenColumn(row);
+					if(newCol < col1) {
+						newCol = col1;
+					}
+					if(i > 0) { //could potentially combine two spots
 						int col2 = columns.get(i - 1);
 						int val2 = board[row][col2];
 						if(val1 == val2) {
-							int newCol = furthestRightOpenColumn(row);
-							if(newCol < col1) {
-								newCol = col1;
-							}
-							combineTwoSpots(row, col1, col2, newCol, val1, val2);
+							combineTwoSpots(row, col1, col2, newCol, val1 + val2);
 							i--; //skip looking at the left-moved column again
+						} else { 
+							openSpot(row, col1);
+							closeSpot(row, newCol, val1); //just move it over
 						}
+					} else {
+						openSpot(row, col1);
+						closeSpot(row, newCol, val1); //just move it over, can't combine with other spot
 					}
 				}
 			}
@@ -72,10 +78,10 @@ public class Grid {
 		return false;
 	}
 	
-	private void combineTwoSpots(int row, int col1, int col2, int newCol, int val1, int val2) {
+	private void combineTwoSpots(int row, int col1, int col2, int newCol, int newVal) {
 		openSpot(row, col1);
 		openSpot(row, col2);
-		closeSpot(row, newCol, val1 + val2);
+		closeSpot(row, newCol, newVal);
 	}
 	
 	private void openSpot(int row, int col) {
