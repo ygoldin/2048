@@ -47,12 +47,10 @@ public class Grid {
 							combineTwoSpots(row, col1, col2, newCol, val1 + val2);
 							i--; //skip looking at the left-moved column again
 						} else { 
-							openSpot(row, col1);
-							closeSpot(row, newCol, val1); //just move it over
+							moveValueOver(row, col1, row, newCol, val1);
 						}
 					} else {
-						openSpot(row, col1);
-						closeSpot(row, newCol, val1); //just move it over, can't combine with other spot
+						moveValueOver(row, col1, row, newCol, val1); //can't combine with other spot
 					}
 				}
 			}
@@ -78,12 +76,10 @@ public class Grid {
 							combineTwoSpots(row, col1, col2, newCol, val1 + val2);
 							i++; //skip looking at the right-moved column again
 						} else { 
-							openSpot(row, col1);
-							closeSpot(row, newCol, val1); //just move it over
+							moveValueOver(row, col1, row, newCol, val1);
 						}
 					} else {
-						openSpot(row, col1);
-						closeSpot(row, newCol, val1); //just move it over, can't combine with other spot
+						moveValueOver(row, col1, row, newCol, val1); //can't combine with other spot
 					}
 				}
 			}
@@ -98,15 +94,17 @@ public class Grid {
 		}
 		if(columns.size() == 1) {
 			int col = columns.get(0);
-			if(col == colOnIntendedSide) {
-				return true;
+			if(col != colOnIntendedSide) {
+				moveValueOver(row, col, row, colOnIntendedSide, board[row][col]);
 			}
-			int value = board[row][col];
-			openSpot(row, col);
-			closeSpot(row, colOnIntendedSide, value);
 			return true;
 		}
 		return false;
+	}
+	
+	private void moveValueOver(int startRow, int startCol, int endRow, int endCol, int val) {
+		openSpot(startRow, startCol);
+		closeSpot(endRow, endCol, val);
 	}
 	
 	private void combineTwoSpots(int row, int col1, int col2, int newCol, int newVal) {
