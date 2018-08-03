@@ -32,20 +32,7 @@ public class Grid {
 	public void moveRight() {
 		for(int row = 0; row < SIZE; row++) {
 			List<Integer> columns = columnsOfValuesInRow(row);
-			if(columns.isEmpty()) {
-				continue;
-			}
-			if(columns.size() == 1) {
-				int col = columns.get(0);
-				if(col == SIZE - 1) {
-					continue;
-				}
-				int value = board[row][col];
-				openSpots.add(setValueFromLocation(row, col)); //re-open the spot
-				board[row][col] = 0;
-				openSpots.remove(setValueFromLocation(row, SIZE - 1)); //close the new spot
-				board[row][SIZE - 1] = value;
-			} else {
+			if(!finishedMoveWithZeroOrOneValuesInRow(columns, row, SIZE - 1)) {
 				for(int i = columns.size() - 1; i >= 0; i--) {
 					int col1 = columns.get(i);
 					int val1 = board[row][col1];
@@ -57,12 +44,7 @@ public class Grid {
 							if(newCol < col1) {
 								newCol = col1;
 							}
-							openSpots.add(setValueFromLocation(row, col1)); //re-open the spot
-							board[row][col1] = 0;
-							openSpots.add(setValueFromLocation(row, col2)); //re-open the spot
-							board[row][col2] = 0;
-							openSpots.remove(setValueFromLocation(row, newCol)); //close the new spot
-							board[row][newCol] = val1 + val2;
+							combineTwoSpots(row, col1, col2, newCol, val1, val2);
 							i--; //skip looking at the left-moved column again
 						}
 					}
@@ -70,6 +52,40 @@ public class Grid {
 			}
 		}
 		placeNewValueRandomly();
+	}
+	
+	private boolean finishedMoveWithZeroOrOneValuesInRow(List<Integer> columns, int row,
+			int colOnIntendedSide) {
+		if(columns.isEmpty()) {
+			return true;
+		}
+		if(columns.size() == 1) {
+			int col = columns.get(0);
+			if(col == colOnIntendedSide) {
+				return true;
+			}
+			int value = board[row][col];
+			openSpot(row, col);
+			closeSpot(row, colOnIntendedSide, value);
+			return true;
+		}
+		return false;
+	}
+	
+	private void combineTwoSpots(int row, int col1, int col2, int newCol, int val1, int val2) {
+		openSpot(row, col1);
+		openSpot(row, col2);
+		closeSpot(row, newCol, val1 + val2);
+	}
+	
+	private void openSpot(int row, int col) {
+		openSpots.add(setValueFromLocation(row, col));
+		board[row][col] = 0;
+	}
+	
+	private void closeSpot(int row, int col, int value) {
+		openSpots.remove(setValueFromLocation(row, col));
+		board[row][col] = value;
 	}
 	
 	private void placeNewValueRandomly() {
