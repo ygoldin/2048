@@ -87,6 +87,35 @@ public class Grid {
 		placeNewValueRandomly();
 	}
 	
+	public void moveDown() {
+		for(int col = 0; col < SIZE; col++) {
+			List<Integer> rows = rowsOfValuesInColumn(col);
+			if(!finishedMoveWithZeroOrOneValuesInCol(rows, col, SIZE - 1)) {
+				for(int i = rows.size() - 1; i >= 0; i--) {
+					int row1 = rows.get(i);
+					int val1 = board[row1][col];
+					int newRow = furthestDownOpenRow(col);
+					if(newRow < row1) { //open row is up or all rows are full
+						newRow = row1;
+					}
+					if(i > 0) { //could potentially combine two spots
+						int row2 = rows.get(i - 1);
+						int val2 = board[row2][col];
+						if(val1 == val2) {
+							combineTwoSpots(row1, col, row2, col, newRow, col, val1 + val2);
+							i--; //skip looking at the bottom-moved row again
+						} else { 
+							moveValueOver(row1, col, newRow, col, val1);
+						}
+					} else {
+						moveValueOver(row1, col, newRow, col, val1); //can't combine with other spot
+					}
+				}
+			}
+		}
+		placeNewValueRandomly();
+	}
+	
 	public void moveUp() {
 		for(int col = 0; col < SIZE; col++) {
 			List<Integer> rows = rowsOfValuesInColumn(col);
