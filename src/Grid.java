@@ -44,7 +44,7 @@ public class Grid {
 						int col2 = columns.get(i - 1);
 						int val2 = board[row][col2];
 						if(val1 == val2) {
-							combineTwoSpots(row, col1, col2, newCol, val1 + val2);
+							combineTwoSpots(row, col1, row, col2, row, newCol, val1 + val2);
 							i--; //skip looking at the left-moved column again
 						} else { 
 							moveValueOver(row, col1, row, newCol, val1);
@@ -73,13 +73,42 @@ public class Grid {
 						int col2 = columns.get(i + 1);
 						int val2 = board[row][col2];
 						if(val1 == val2) {
-							combineTwoSpots(row, col1, col2, newCol, val1 + val2);
+							combineTwoSpots(row, col1, row, col2, row, newCol, val1 + val2);
 							i++; //skip looking at the right-moved column again
 						} else { 
 							moveValueOver(row, col1, row, newCol, val1);
 						}
 					} else {
 						moveValueOver(row, col1, row, newCol, val1); //can't combine with other spot
+					}
+				}
+			}
+		}
+		placeNewValueRandomly();
+	}
+	
+	public void moveUp() {
+		for(int col = 0; col < SIZE; col++) {
+			List<Integer> rows = rowsOfValuesInColumn(col);
+			if(!finishedMoveWithZeroOrOneValuesInCol(rows, col, 0)) {
+				for(int i = 0; i < rows.size(); i++) {
+					int row1 = rows.get(i);
+					int val1 = board[row1][col];
+					int newRow = furthestUpOpenRow(col);
+					if(newRow > row1 || newRow < 0) { //open row is down or all rows are full
+						newRow = row1;
+					}
+					if(i < rows.size() - 1) { //could potentially combine two spots
+						int row2 = rows.get(i + 1);
+						int val2 = board[row2][col];
+						if(val1 == val2) {
+							combineTwoSpots(row1, col, row2, col, newRow, col, val1 + val2);
+							i++; //skip looking at the bottom-moved row again
+						} else { 
+							moveValueOver(row1, col, newRow, col, val1);
+						}
+					} else {
+						moveValueOver(row1, col, newRow, col, val1); //can't combine with other spot
 					}
 				}
 			}
@@ -102,15 +131,30 @@ public class Grid {
 		return false;
 	}
 	
+	private boolean finishedMoveWithZeroOrOneValuesInCol(List<Integer> rows, int col,
+			int rowOnIntendedSide) {
+		if(rows.isEmpty()) {
+			return true;
+		}
+		if(rows.size() == 1) {
+			int row = rows.get(0);
+			if(row != rowOnIntendedSide) {
+				moveValueOver(row, col, rowOnIntendedSide, col, board[row][col]);
+			}
+			return true;
+		}
+		return false;
+	}
+	
 	private void moveValueOver(int startRow, int startCol, int endRow, int endCol, int val) {
 		openSpot(startRow, startCol);
 		closeSpot(endRow, endCol, val);
 	}
 	
-	private void combineTwoSpots(int row, int col1, int col2, int newCol, int newVal) {
-		openSpot(row, col1);
-		openSpot(row, col2);
-		closeSpot(row, newCol, newVal);
+	private void combineTwoSpots(int row1, int col1, int row2, int col2, int newRow, int newCol, int newVal) {
+		openSpot(row1, col1);
+		openSpot(row2, col2);
+		closeSpot(newRow, newCol, newVal);
 	}
 	
 	private void openSpot(int row, int col) {
@@ -150,7 +194,7 @@ public class Grid {
 	//returns a list of all of the occupied rows in the column
 	private List<Integer> rowsOfValuesInColumn(int col) {
 		List<Integer> rows = new ArrayList<>();
-		for(int r = 0; r < SIZE - 1; r++) {
+		for(int r = 0; r < SIZE; r++) {
 			if(board[r][col] != 0) {
 				rows.add(r);
 			}
