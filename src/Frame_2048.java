@@ -64,12 +64,18 @@ public class Frame_2048 extends JFrame {
 		private static final String FONT_NAME = "Arial";
 		private int row;
 		private int col;
+		private final Color defaultColor = new Color(224, 224, 224);
+		private final Color[] colors = {new Color(255, 51, 255), new Color(153, 51, 255),
+				new Color(51, 51, 255), new Color(51, 153, 255), new Color(51, 255, 255),
+				new Color(51, 255, 153), new Color(51, 255, 51), new Color(153, 255, 51),
+				new Color(255, 255, 51), new Color(255, 153, 51), new Color(255, 51, 51)};
 		
 		public GridSpot(int row, int col) {
 			super();
 			setOpaque(true);
 			setRolloverEnabled(false);
 			setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
+			//setForeground(Color.WHITE);
 			this.row = row;
 			this.col = col;
 			addKeyListener(keyListener);
@@ -80,9 +86,20 @@ public class Frame_2048 extends JFrame {
 			int value = grid2048.valueAtLocation(row, col);
 			if(value != 0) {
 				setText("" + value);
+				setBackground(colors[powerOfTwo(value) - 1]);
 			} else {
 				setText(null);
+				setBackground(defaultColor);
 			}
+		}
+		
+		private int powerOfTwo(int value) {
+			int power = 1;
+			while(value > 2) {
+				value = value/2;
+				power++;
+			}
+			return power;
 		}
 	}
 }
