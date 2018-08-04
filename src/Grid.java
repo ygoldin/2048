@@ -10,6 +10,7 @@ public class Grid {
 	private static final int SMALLEST_VALUE = 2;
 	private Random rand;
 	private Set<Integer> openSpots;
+	private boolean moveMade;
 	
 	public Grid() {
 		board = new int[SIZE][SIZE];
@@ -67,17 +68,20 @@ public class Grid {
 						int val2 = board[row][col2];
 						if(val1 == val2) {
 							combineTwoSpots(row, col1, row, col2, row, newCol, val1 + val2);
+							moveMade = true;
 							i--; //skip looking at the left-moved column again
 						} else { 
 							moveValueOver(row, col1, row, newCol, val1);
+							moveMade = moveMade || col1 != newCol;
 						}
 					} else {
 						moveValueOver(row, col1, row, newCol, val1); //can't combine with other spot
+						moveMade = moveMade || col1 != newCol;
 					}
 				}
 			}
 		}
-		placeNewValueRandomly();
+		endOfMove();
 	}
 	
 	public void moveLeft() {
@@ -96,17 +100,20 @@ public class Grid {
 						int val2 = board[row][col2];
 						if(val1 == val2) {
 							combineTwoSpots(row, col1, row, col2, row, newCol, val1 + val2);
+							moveMade = true;
 							i++; //skip looking at the right-moved column again
 						} else { 
 							moveValueOver(row, col1, row, newCol, val1);
+							moveMade = moveMade || col1 != newCol;
 						}
 					} else {
 						moveValueOver(row, col1, row, newCol, val1); //can't combine with other spot
+						moveMade = moveMade || col1 != newCol;
 					}
 				}
 			}
 		}
-		placeNewValueRandomly();
+		endOfMove();
 	}
 	
 	public void moveDown() {
@@ -125,17 +132,20 @@ public class Grid {
 						int val2 = board[row2][col];
 						if(val1 == val2) {
 							combineTwoSpots(row1, col, row2, col, newRow, col, val1 + val2);
+							moveMade = true;
 							i--; //skip looking at the bottom-moved row again
 						} else { 
 							moveValueOver(row1, col, newRow, col, val1);
+							moveMade = moveMade || row1 != newRow;
 						}
 					} else {
 						moveValueOver(row1, col, newRow, col, val1); //can't combine with other spot
+						moveMade = moveMade || row1 != newRow;
 					}
 				}
 			}
 		}
-		placeNewValueRandomly();
+		endOfMove();
 	}
 	
 	public void moveUp() {
@@ -154,17 +164,27 @@ public class Grid {
 						int val2 = board[row2][col];
 						if(val1 == val2) {
 							combineTwoSpots(row1, col, row2, col, newRow, col, val1 + val2);
+							moveMade = true;
 							i++; //skip looking at the bottom-moved row again
 						} else { 
 							moveValueOver(row1, col, newRow, col, val1);
+							moveMade = moveMade || row1 != newRow;
 						}
 					} else {
 						moveValueOver(row1, col, newRow, col, val1); //can't combine with other spot
+						moveMade = moveMade || row1 != newRow;
 					}
 				}
 			}
 		}
-		placeNewValueRandomly();
+		endOfMove();
+	}
+	
+	private void endOfMove() {
+		if(moveMade) {
+			placeNewValueRandomly();
+		}
+		moveMade = false;
 	}
 	
 	private boolean finishedMoveWithZeroOrOneValuesInRow(List<Integer> columns, int row,
@@ -176,6 +196,7 @@ public class Grid {
 			int col = columns.get(0);
 			if(col != colOnIntendedSide) {
 				moveValueOver(row, col, row, colOnIntendedSide, board[row][col]);
+				moveMade = true;
 			}
 			return true;
 		}
@@ -191,6 +212,7 @@ public class Grid {
 			int row = rows.get(0);
 			if(row != rowOnIntendedSide) {
 				moveValueOver(row, col, rowOnIntendedSide, col, board[row][col]);
+				moveMade = true;
 			}
 			return true;
 		}
