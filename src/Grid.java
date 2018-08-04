@@ -22,6 +22,28 @@ public class Grid {
 		placeNewValueRandomly();
 	}
 	
+	public boolean isGameOver() {
+		if(!openSpots.isEmpty()) {
+			return false;
+		}
+		
+		for(int r = 0; r < SIZE - 1; r++) { //check down
+			for(int c = 0; c < SIZE; c++) {
+				if(board[r][c] == board[r + 1][c]) {
+					return false;
+				}
+			}
+		}
+		for(int c = 0; c < SIZE - 1; c++) { //check down
+			for(int r = 0; r < SIZE; r++) {
+				if(board[r][c] == board[r][c + 1]) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 	public int valueAtLocation(int row, int col) {
 		if(row < 0 || row >= SIZE || col < 0 || col >= SIZE) {
 			throw new IllegalArgumentException();
