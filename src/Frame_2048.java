@@ -73,6 +73,7 @@ public class Frame_2048 extends JFrame {
 					tiles[r][c] = new GridSpot(r, c);
 				}
 			}
+			repaint();
 		}
 	}
 	
