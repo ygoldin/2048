@@ -31,17 +31,16 @@ public class Frame_2048 extends JFrame {
 		        	grid2048.moveUp();
 				
 				repaint();
+				if(grid2048.isGameOver()) {
+					gameOverActions();
+				}
 			}
 
 			@Override
-			public void keyReleased(KeyEvent e) {
-				
-			}
+			public void keyReleased(KeyEvent e) {}
 
 			@Override
-			public void keyTyped(KeyEvent e) {
-				
-			}
+			public void keyTyped(KeyEvent e) {}
 		};
 		
 		JPanel mainGridTilePanel = new JPanel();
@@ -58,6 +57,25 @@ public class Frame_2048 extends JFrame {
 		addKeyListener(keyListener);
 	}
 	
+	private void gameOverActions() {
+		String message;
+		if(grid2048.reached2048()) {
+			message = "Victory!";
+		} else {
+			message = "Game Over";
+		}
+		
+		if(JOptionPane.showConfirmDialog(this, message, "Play again?", JOptionPane.YES_NO_OPTION)
+				== JOptionPane.YES_OPTION) { //play again
+			grid2048 = new Grid();
+			for(int r = 0; r < Grid.SIZE; r++) {
+				for(int c = 0; c < Grid.SIZE; c++) {
+					tiles[r][c] = new GridSpot(r, c);
+				}
+			}
+		}
+	}
+	
 	//this class represents one of the buttons on the 2048 grid
 	private class GridSpot extends JButton {
 		private static final int FONT_SIZE = 80;
@@ -65,10 +83,10 @@ public class Frame_2048 extends JFrame {
 		private int row;
 		private int col;
 		private final Color defaultColor = new Color(224, 224, 224);
-		private final Color[] colors = {new Color(255, 51, 255), new Color(153, 51, 255),
-				new Color(51, 51, 255), new Color(51, 153, 255), new Color(51, 255, 255),
-				new Color(51, 255, 153), new Color(51, 255, 51), new Color(153, 255, 51),
-				new Color(255, 255, 51), new Color(255, 153, 51), new Color(255, 51, 51)};
+		private final Color[] colors = {new Color(255, 153, 255), new Color(204, 153, 255),
+				new Color(153, 153, 255), new Color(153, 204, 255), new Color(153, 255, 255),
+				new Color(153, 255, 204), new Color(153, 255, 153), new Color(204, 255, 153),
+				new Color(255, 255, 153), new Color(255, 204, 153), new Color(255, 153, 153)};
 		
 		public GridSpot(int row, int col) {
 			super();

@@ -11,6 +11,7 @@ public class Grid {
 	private Random rand;
 	private Set<Integer> openSpots;
 	private boolean moveMade;
+	private boolean reached2048;
 	
 	public Grid() {
 		board = new int[SIZE][SIZE];
@@ -24,6 +25,9 @@ public class Grid {
 	}
 	
 	public boolean isGameOver() {
+		if(reached2048) {
+			return true;
+		}
 		if(!openSpots.isEmpty()) {
 			return false;
 		}
@@ -43,6 +47,10 @@ public class Grid {
 			}
 		}
 		return true;
+	}
+	
+	public boolean reached2048() {
+		return reached2048;
 	}
 	
 	public int valueAtLocation(int row, int col) {
@@ -228,6 +236,9 @@ public class Grid {
 		openSpot(row1, col1);
 		openSpot(row2, col2);
 		closeSpot(newRow, newCol, newVal);
+		if(newVal == 2048) {
+			reached2048 = true;
+		}
 	}
 	
 	private void openSpot(int row, int col) {
