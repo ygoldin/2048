@@ -10,9 +10,11 @@ public class Frame_2048 extends JFrame {
 	private Grid grid2048;
 	private GridSpot[][] tiles;
 	private KeyListener keyListener;
+	private boolean playPast2048;
 
 	public Frame_2048() {
 		grid2048 = new Grid();
+		playPast2048 = false;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setMinimumSize(new Dimension(1024, 768));
@@ -31,7 +33,7 @@ public class Frame_2048 extends JFrame {
 		        	grid2048.moveUp();
 				
 				repaint();
-				if(grid2048.isGameOver()) {
+				if(grid2048.isGameOver() && !playPast2048) {
 					gameOverActions();
 				}
 			}
@@ -65,7 +67,7 @@ public class Frame_2048 extends JFrame {
 			message = "Game Over";
 		}
 		
-		if(JOptionPane.showConfirmDialog(this, message, "Play again?", JOptionPane.YES_NO_OPTION)
+		if(JOptionPane.showConfirmDialog(this, "Play again?", message, JOptionPane.YES_NO_OPTION)
 				== JOptionPane.YES_OPTION) { //play again
 			grid2048 = new Grid();
 			for(int r = 0; r < Grid.SIZE; r++) {
@@ -74,6 +76,8 @@ public class Frame_2048 extends JFrame {
 				}
 			}
 			repaint();
+		} else if(grid2048.reached2048()) {
+			playPast2048 = true;
 		}
 	}
 	
